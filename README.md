@@ -3,11 +3,12 @@
 This library fairly easily provides access to Commodore disk 
 images (D64, D71, D71, G64, G71) for projects using SDFat in the Arduino environment.
 
+## Credits
+
 Most of this code was extracted from [VICE](https://vice-emu.sourceforge.io/). 
 VICE is distributed under the GPL-2 license. All credits go to the VICE developers.
 
-The VDriveClass C++ wrapper code was written by me (David Hansel) and is 
-distributed here under the GPL-3 license.
+The VDriveClass C++ wrapper code was written by me and is distributed here under the GPL-3 license.
 
 ## Installation
 
