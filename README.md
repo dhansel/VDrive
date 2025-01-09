@@ -1,7 +1,7 @@
 # Virtual disk drive (VDrive) library
 
-This library fairly easily provides access to Commodore disk 
-images (D64, D71, D71, G64, G71) for projects using SDFat in the Arduino environment.
+This library provides fairly simple access to Commodore disk 
+images (D64, D71, D71, G64, G71) for C++ projects using SDFat in the Arduino environment.
 
 ## Credits
 
