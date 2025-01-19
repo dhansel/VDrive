@@ -245,6 +245,7 @@ bool VDrive::read(uint8_t channel, uint8_t *buffer, size_t *nbytes, bool *eoi)
         }
     }
   
+  *nbytes = i;
   return true;
 }
 
