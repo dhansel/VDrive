@@ -28,11 +28,11 @@
 
 #ifdef WIN32
 typedef FILE ADFILE;
-#elif defined(ARDUINO)
-typedef void ADFILE;
 #elif defined(ESP_PLATFORM)
 // Meatloaf (handles compression on its own)
 #define ARCHDEP_NO_MINIZ
+typedef void ADFILE;
+#elif defined(ARDUINO)
 typedef void ADFILE;
 #else
 #error "unsupported platform"
