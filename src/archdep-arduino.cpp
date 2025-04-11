@@ -25,7 +25,7 @@ extern "C"
 
 int archdep_default_logger(const char *level_string, const char *txt)
 {
-  if( Serial ) Serial.println(txt);
+  if( Serial ) { Serial.println(txt); Serial.flush(); }
   return 0;
 }
 
@@ -182,7 +182,6 @@ ADFILE *archdep_fnofile()
 
 ADFILE *archdep_fopen(const char* filename, const char* mode)
 {
-  ADFILE *res = NULL;
   DBG(("archdep_fopen: %s %s ", filename, mode));
 
   oflag_t flags = 0;
@@ -198,13 +197,14 @@ ADFILE *archdep_fopen(const char* filename, const char* mode)
     flags = O_RDWR | O_AT_END;
 
   SdFile *f = new SdFile();
-  if( f->open(filename, flags) )
-    res = (ADFILE *) f;
-  else
-    delete f; 
+  if( !f->open(filename, flags) )
+    {
+      delete f;
+      f = NULL;
+    }
 
   DBG(("=> %p\n", f));
-  return res;
+  return (ADFILE *) f;
 }
 
 
@@ -252,7 +252,7 @@ long int archdep_ftell(ADFILE *stream)
 int archdep_fseek(ADFILE *stream, long int offset, int whence)
 {
   SdFile *f = (SdFile *) stream;
-  DBG(("archdep_fseek: %p %li %i ", stream, whence, offset));
+  DBG(("archdep_fseek: %p %li %i ", stream, offset, whence));
 
   switch( whence )
     {
@@ -261,7 +261,7 @@ int archdep_fseek(ADFILE *stream, long int offset, int whence)
     case SEEK_END: f->seekEnd(offset); break;
     }
 
-  DBG(("=> %i %lu\n", 0, f->curPosition()));
+  DBG(("=> %lu\n", f->curPosition()));
   return 0;
 }
 
