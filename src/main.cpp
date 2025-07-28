@@ -32,36 +32,41 @@ int main(int argc, char **argv)
         }
       else if( argc>3 && strcmp(argv[2], "read")==0 && drive->openDiskImage(argv[1]) )
         {
-          if( drive->openFile(0, argv[3], true) )
+          for(int i=3; i<argc; i++)
             {
-              FILE *outfile = fopen(argv[3], "wb");
-              if( outfile )
+              printf("Reading file '%s' ...\n", argv[i]);
+              if( drive->openFile(0, argv[i], true) )
                 {
-                  bool eof = false;
-                  uint8_t buf[128];
-                  while( drive->isFileOk(0) && !eof )
+                  FILE *outfile = fopen(argv[i][0]==':' ? argv[i]+1 : argv[i], "wb");
+                  if( outfile )
                     {
-                      size_t n = 128;
-                      if( drive->read(0, buf, &n, &eof) )
+                      printf("%p\n", outfile);
+                      bool eof = false;
+                      uint8_t buf[128];
+                      while( drive->isFileOk(0) && !eof )
                         {
-                          fwrite(buf, 1, n, outfile);
+                          size_t n = 128;
+                          if( drive->read(0, buf, &n, &eof) )
+                            {
+                              fwrite(buf, 1, n, outfile);
+                            }
+                          else
+                            {
+                              printf("Error (read): %s\n", drive->getStatusString());
+                              break;
+                            }
                         }
-                      else
-                        {
-                          printf("Error (read): %s\n", drive->getStatusString());
-                          break;
-                        }
-                    }
 
-                  fclose(outfile);
+                      fclose(outfile);
+                    }
+                  else
+                    printf("Can not write to local file: %s\n", argv[i]);
+
+                  drive->closeFile(0);
                 }
               else
-                printf("Can not write to local file: %s\n", argv[3]);
-
-              drive->closeFile(0);
+                printf("Error (open): %s\n", drive->getStatusString());
             }
-          else
-            printf("Error (open): %s\n", drive->getStatusString());
         }
       else if( argc>3 && strcmp(argv[2], "write")==0 && drive->openDiskImage(argv[1]) )
         {
