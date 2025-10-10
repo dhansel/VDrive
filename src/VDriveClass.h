@@ -93,6 +93,8 @@ class VDrive
   static bool createDiskImage(const char *filename, const char *itype, const char *name, bool convertNameToPETSCII);
 
  private:
+  void countOpenChannels();
+
   int m_numOpenChannels;
   struct vdrive_s *m_drive;
 };
