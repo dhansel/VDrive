@@ -577,6 +577,13 @@ int vdrive_attach_image(disk_image_t *image, unsigned int unit,
         vdrive->selected_part = vdrive->current_part;
     }
 
+    /* reset "last file" pointers for 1541 */
+    if( VDRIVE_IS_1541(vdrive) )
+      {
+        vdrive->ram[0x007E] = 0; // track
+        vdrive->ram[0x026F] = 0; // sector
+      }
+
 #if 0
     /* read whole bam to ensure image is good */
     if (vdrive_bam_read_bam(vdrive)) {
