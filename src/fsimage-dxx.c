@@ -349,7 +349,7 @@ int fsimage_dxx_read_sector(const disk_image_t *image, uint8_t *buf, const disk_
     if (sectors < 0) {
         log_error(fsimage_dxx_log, "Track %u, Sector %u out of bounds.",
                   dadr->track, dadr->sector);
-        return -1;
+        return CBMDOS_IPE_ILLEGAL_TRACK_OR_SECTOR;
     }
 
     offset = sectors * 256;
