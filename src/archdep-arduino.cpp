@@ -23,6 +23,17 @@ extern "C"
 #endif
 
 
+uint32_t archdep_get_available_heap()
+{
+#ifdef ARDUINO_ARCH_RP2040
+  extern char __StackLimit, __bss_end__;
+  struct mallinfo m = mallinfo();
+  return (&__StackLimit - &__bss_end__) - m.uordblks;
+#else
+  return 0;
+#endif
+}
+
 int archdep_default_logger(const char *level_string, const char *txt)
 {
   if( Serial ) { Serial.println(txt); Serial.flush(); }

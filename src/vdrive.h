@@ -188,13 +188,6 @@ typedef struct vdrive_s {
     uint8_t *bam;              /* Disk header blk (if any) followed by BAM blocks */
     bufferinfo_t buffers[16];
 
-    /* Memory read command buffer.  */
-    uint8_t mem_buf[256];
-    unsigned int mem_length;
-
-    /* removed side sector data and placed it in buffer structure */
-    /* BYTE *side_sector; */
-
     uint8_t ram[DRIVE_RAMSIZE];
 } vdrive_t;
 

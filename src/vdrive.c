@@ -63,9 +63,6 @@
 #include "vdrive-internal.h"
 #include "vdrive-rel.h"
 #include "vdrive.h"
-#if 0
-#include "uiapi.h"
-#endif
 
 static log_t vdrive_log = LOG_DEFAULT;
 
@@ -184,8 +181,8 @@ void vdrive_device_shutdown(vdrive_t *vdrive)
         for (i = 0; i < 16; i++) {
             p = &(vdrive->buffers[i]);
             vdrive_free_buffer(p);
-            if( p->buffer!=NULL && mem_is_within_drive_ram(vdrive, p->buffer) )
-              lib_free(p->buffer);
+            if( p->buffer!=NULL && !mem_is_within_drive_ram(vdrive, p->buffer) )
+	      lib_free(p->buffer);
             p->buffer = NULL;
         }
     }

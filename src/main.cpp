@@ -1,4 +1,4 @@
-#ifdef WIN32
+#if !defined(ARDUINO) && defined(__GNUC__)
 
 #include <stdio.h>
 #include <string.h>
@@ -113,7 +113,7 @@ int main_(VDrive *drive, int argc, char **argv)
             {
               size_t n = 1;
               uint8_t b;
-              bool eoi;
+              bool eoi = false;
               while( !eoi )
                 if( drive->read(2, &b, &n, &eoi) )
                   printf("%02X ", b);
@@ -261,6 +261,7 @@ int main(int argc, char **argv)
     }
 
   delete drive;
+  return 0;
 }
 
 

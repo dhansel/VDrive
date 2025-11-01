@@ -3776,9 +3776,11 @@ int vdrive_command_memory_read(vdrive_t *vdrive, const uint8_t *buf, uint16_t ad
           p->buffer[i] = addr+i<DRIVE_RAMSIZE ? vdrive->ram[addr+i] : 0xFF;
       }
 
-
-    /* add a CR at the end */
-    p->buffer[i] = 13;
+    /* add a CR at the end. Note the slight incompatibility here in that we don't add
+       the CR when returning a full 256 bytes of data (the 1541 does in that case too).
+       However the changes necessary to support that are significant and it seems
+       unnecessary to do unless some software is found that actually relies on it */
+    if( len<256 ) p->buffer[len++] = 13;
 
 out:
     p->length = len-1;

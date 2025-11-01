@@ -25,6 +25,12 @@ extern "C"
 #endif
 
 
+uint32_t archdep_get_available_heap()
+{
+  return 0;
+}
+
+
 int archdep_default_logger(const char *level_string, const char *txt)
 {
   Debug_printv("%s", txt);
