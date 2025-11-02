@@ -415,7 +415,7 @@ unsigned int cbmdos_command_parse_plus(cbmdos_cmd_parse_plus_t *cmd_parse)
                     }
                     p++;
                 } else {
-                    while (p < limit && (*p < '0' || *p > '9')) {
+                    while (p <= p2 && (*p < '0' || *p > '9')) {
                         p++;
                     }
                 }

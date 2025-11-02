@@ -575,6 +575,10 @@ int vdrive_iec_open(vdrive_t *vdrive, const uint8_t *name, unsigned int length,
         goto out;
     }
 
+    /* 1541 ignores drive argument in file name */
+    if( cmd_parse->drive != 0 && VDRIVE_IS_1541(vdrive) )
+      cmd_parse->drive = 0;
+
 #if 0
     if (cmd_parse->drive != 0) {
         /* a drive number was specified in the filename */
