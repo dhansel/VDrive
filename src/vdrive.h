@@ -230,6 +230,7 @@ int vdrive_attach_image(struct disk_image_s *image, unsigned int unit, unsigned 
 void vdrive_detach_image(struct disk_image_s *image, unsigned int unit, unsigned int drive, vdrive_t *vdrive);
 void vdrive_close_all_channels(vdrive_t *vdrive);
 void vdrive_close_all_channels_partition(vdrive_t *vdrive, int part);
+void vdrive_reset_last_track_sector(vdrive_t *vdrive);
 int vdrive_get_max_sectors(vdrive_t *vdrive, unsigned int track);
 int vdrive_get_max_sectors_per_head(vdrive_t *vdrive, unsigned int track);
 void vdrive_get_last_read(unsigned int *track, unsigned int *sector, uint8_t **buffer);

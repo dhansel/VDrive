@@ -303,11 +303,15 @@ int vdrive_command_execute(vdrive_t *vdrive, const uint8_t *buf,
                         goto out;
 
                     case 'J': /* UJ */ /* CMDHD/FD2000/F4000 also have UJP to reload partition table */
+                        /* Warm/Cold reset */
+                        vdrive_close_all_channels(vdrive);
+                        vdrive_reset_last_track_sector(vdrive);
+
                         if (cmd.commandlength > 2 && cmd.command[2] == 'P' &&
                             vdrive->haspt ) {
-                            vdrive_close_all_channels(vdrive); /* Warm/Cold reset */
                             vdrive->sys_offset = UINT32_MAX;
                             vdrive->current_offset = UINT32_MAX;
+
                             if (!vdrive_read_partition_table(vdrive)) {
                                 /* try to switch to default */
                                 if (vdrive_command_switch(vdrive, vdrive->default_part)) {
@@ -321,6 +325,7 @@ int vdrive_command_execute(vdrive_t *vdrive, const uint8_t *buf,
                             status = CBMDOS_IPE_NOT_READY;
                             goto out;
                         }
+
                         status = CBMDOS_IPE_DOS_VERSION;
                         goto out;
 
@@ -3162,6 +3167,7 @@ static int vdrive_command_format_internal(vdrive_t *vdrive, cbmdos_cmd_parse_plu
         }
 
         vdrive_close_all_channels(vdrive);
+        vdrive_reset_last_track_sector(vdrive);
 
         /* setup disk image access */
         vdrive->sys_offset = psize;
