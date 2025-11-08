@@ -520,8 +520,9 @@ static int vdrive_command_u1a2b(vdrive_t *vdrive, cbmdos_cmd_parse_plus_t *cmd)
                       "drive=%d, track=%d sector=%d.", rc, channel,
                       vdrive->buffers[channel].mode, drive, track, sector);
 #endif
+            bufferinfo_t *p = &(vdrive->buffers[channel]);
 
-            if (vdrive->buffers[channel].mode != BUFFER_MEMORY_BUFFER) {
+            if (p->mode != BUFFER_MEMORY_BUFFER) {
                 status = CBMDOS_IPE_NO_CHANNEL;
                 track = 0;
                 sector = 0;
@@ -537,7 +538,7 @@ static int vdrive_command_u1a2b(vdrive_t *vdrive, cbmdos_cmd_parse_plus_t *cmd)
                     sector = 0;
                     goto out;
                 } else {
-                    drive = vdrive->buffers[channel].partition;
+                    drive = p->partition;
                 }
             }
             /* drive is honored when using dual drives; checked next */
@@ -559,30 +560,42 @@ static int vdrive_command_u1a2b(vdrive_t *vdrive, cbmdos_cmd_parse_plus_t *cmd)
                     goto out;
                 }
 #endif
-                status = vdrive_write_sector(vdrive, vdrive->buffers[channel].buffer, track, sector);
-                if (status > 0) {
-                    goto out;
-                } else if (status < 0) {
-                    track = 0;
-                    sector = 0;
+                status = vdrive_write_sector(vdrive, p->buffer, track, sector);
+                if (status < 0) {
                     status = CBMDOS_IPE_NOT_READY;
-                    goto out;
                 }
             } else if (cmd->command[1] == '1' || cmd->command[1] == 'A') {
                 /* For read */
-                status = vdrive_read_sector(vdrive, vdrive->buffers[channel].buffer, track, sector);
-                if (status > 0) {
-                    goto out;
-                } else if (status < 0) {
-                    track = 0;
-                    sector = 0;
+                status = vdrive_read_sector(vdrive, p->buffer, track, sector);
+                if( status < 0 )
+                  {
                     status = CBMDOS_IPE_NOT_READY;
-                    goto out;
-                }
+                    track  = 0;
+                    sector = 0;
+                  }
+                else
+                  {
+                    p->length   = 256;
+                    p->readmode = CBMDOS_FAM_READ;
+                    if( status==0 )
+                      {
+                        p->bufptr = 0;
+                      }
+                    else 
+                      {
+                        // if an error happens when reading a block, the buffer pointer resets to 1, not 0
+                        p->bufptr = 1;
+
+                        if( status==23 )
+                          {
+                            // if error 23 happens and the buffer is read anyways, the first byte
+                            // transmitted seems to be the buffer number. We don't always have the
+                            // exact buffer number, in those cases we report 2 (the "user buffer").
+                            vdrive->mem_buf_next_byte_override = p->bufnum<0 ? 2 : p->bufnum;
+                          }
+                      }
+                  }
             }
-            vdrive->buffers[channel].bufptr = 0;
-            track = 0;
-            sector = 0;
         } else {
             log_error(vdrive_command_log, "U1/A/2/B invalid parameter "
                       "C:%i D:%i T:%i S:%i.", channel, drive, track, sector);
@@ -596,7 +609,7 @@ out:
     vdrive_command_return(vdrive, origpart);
 
     vdrive->last_code = CBMDOS_IPE_OK;
-
+    if( status==0 ) { track = 0; sector = 0; }
     return vdrive_command_set_error(vdrive, status, track, sector);
 }
 

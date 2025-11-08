@@ -1040,14 +1040,21 @@ int vdrive_iec_read(vdrive_t *vdrive, uint8_t *data, unsigned int secondary)
             return SERIAL_ERROR | SERIAL_EOF;
 
         case BUFFER_MEMORY_BUFFER:
+          if( vdrive->mem_buf_next_byte_override < 0 )
             *data = p->buffer[p->bufptr];
-            p->bufptr++;
-            if (p->bufptr >= p->length) {
-                /* Buffer pointer resets to 1, not 0. */
-                p->bufptr = 1;
-                status = SERIAL_EOF;
+          else
+            {
+              *data = vdrive->mem_buf_next_byte_override;
+              vdrive->mem_buf_next_byte_override = -1;
             }
-            break;
+
+          p->bufptr++;
+          if (p->bufptr >= p->length) {
+            /* Buffer pointer resets to 1, not 0. */
+            p->bufptr = 1;
+            status = SERIAL_EOF;
+          }
+          break;
 
         case BUFFER_DIRECTORY_READ:
         case BUFFER_PARTITION_READ:

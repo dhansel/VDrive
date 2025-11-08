@@ -121,6 +121,7 @@ void vdrive_alloc_buffer(vdrive_t *vdrive, bufferinfo_t *p, int bufnum, int mode
         p->buffer = lib_realloc(p->buffer, size);
       }
     p->mode = mode;
+    p->bufnum = bufnum;
 }
 
 void vdrive_free_buffer(bufferinfo_t *p)
@@ -168,7 +169,7 @@ int vdrive_device_setup(vdrive_t *vdrive, unsigned int unit)
     vdrive->d90toggle = 0;
     vdrive->dir_part = 0;
     vdrive->last_code = CBMDOS_IPE_OK;
-
+    vdrive->mem_buf_next_byte_override = -1;
     return 0;
 }
 

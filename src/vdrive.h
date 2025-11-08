@@ -93,6 +93,7 @@ typedef struct bufferinfo_s {
     unsigned int readmode; /* Is this channel for reading or writing */
     uint8_t *buffer;          /* Use this to save data */
     uint8_t *slot;            /* Save data for directory-slot */
+    int8_t bufnum;         /* buffer number of this buffer (-1 means unspecified) */
     unsigned int bufptr;   /* Use this to save/read data to disk */
     unsigned int track;    /* which track is allocated for this sector */
     unsigned int sector;   /*   (for write files only) */
@@ -183,6 +184,7 @@ typedef struct vdrive_s {
     int dir_part;              /* which drive to show first when doing group dirs */
     int dir_count;             /* how many drives are left when doing group dirs */
     int last_code;             /* for command channel status string */
+    int mem_buf_next_byte_override; /* if >=0, then send this the next time a byte is read from this buffer */
 
     unsigned int bam_size;
     uint8_t *bam;              /* Disk header blk (if any) followed by BAM blocks */
