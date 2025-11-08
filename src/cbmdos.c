@@ -34,7 +34,7 @@
 #include "lib.h"
 #include "log.h"
 
-//#define DEBUG_CBMDOS
+#define DEBUG_CBMDOS
 
 typedef struct cbmdos_errortext_s {
     unsigned int nr;
@@ -626,7 +626,7 @@ unsigned int cbmdos_command_parse_plus(cbmdos_cmd_parse_plus_t *cmd_parse)
                     break;
                 }
                 /* get out the moment we see a delimiter */
-                if (*p == ':' || *p == ' ' || *p == 29 || (special && *p == ',') ) {
+                if (*p == ':' || *p == ' ' || *p == 29 || (special && (*p == ',' || *p==';')) ) {
                     break;
                 }
                 if (!special) {
@@ -641,7 +641,7 @@ unsigned int cbmdos_command_parse_plus(cbmdos_cmd_parse_plus_t *cmd_parse)
                     break;
                 }
                 /* get out the moment we see a delimiter */
-                if (*p == ':' || *p == ' ' || *p == 29 || (special && *p == ',') ) {
+                if (*p == ':' || *p == ' ' || *p == 29 || (special && (*p == ',' || *p==';')) ) {
                     break;
                 }
                 if (!special) {
@@ -663,7 +663,7 @@ unsigned int cbmdos_command_parse_plus(cbmdos_cmd_parse_plus_t *cmd_parse)
             if( (cmd_parse->commandlength>1) && (cmd_parse->command[0])=='U' && cmd_parse->command[1]>=0x01 && cmd_parse->command[1]<=0x09 )
               cmd_parse->command[1] += '0';
 
-            if( special && *p == ',' )
+            if( special && (*p == ',' || *p == ';') )
               p++;
         }
 
