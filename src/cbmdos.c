@@ -34,7 +34,7 @@
 #include "lib.h"
 #include "log.h"
 
-#define DEBUG_CBMDOS
+//#define DEBUG_CBMDOS
 
 typedef struct cbmdos_errortext_s {
     unsigned int nr;
@@ -524,7 +524,8 @@ unsigned int cbmdos_command_parse_plus(cbmdos_cmd_parse_plus_t *cmd_parse)
                         cmd_parse->readmode = CBMDOS_FAM_APPEND;
                         break;
                     default:
-                        return CBMDOS_IPE_INVAL;
+                      { /* CBM DOS just ignores invalid characters, not an error
+                           return CBMDOS_IPE_INVAL; */ }
                 }
                 p++;
                 /* skip extra characters after first ','; ",sequential,write" is allowed for example */
