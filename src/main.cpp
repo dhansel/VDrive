@@ -36,15 +36,16 @@ int main_(VDrive *drive, int argc, char **argv)
         {
           for(int i=3; i<argc; i++)
             {
-              const char *testfile = "\xa0\x20\x20\x20\xa0\x20\xa0\x20";
+              //const char *testfile = "\xa0\x20\x20\x20\xa0\x20\xa0\x20";
+              const char *testfile = "\x00";
 
               int channel = 2;
               printf("Reading file '%s' ...\n", argv[i]);
               bool ok;
               if( strcmp(argv[i], "test")==0 )
-                ok = drive->openFile(channel, testfile, false);
+                ok = drive->openFile(channel, testfile, 1, false);
               else
-                ok = drive->openFile(channel, argv[i], true);
+                ok = drive->openFile(channel, argv[i], -1, true);
 
               if( ok )
                 {
@@ -117,14 +118,16 @@ int main_(VDrive *drive, int argc, char **argv)
               uint8_t b;
               bool eoi;
               for(int i=0; i<256; i++)
-                if( drive->read(channel, &b, &n, &eoi) )
-                  {
-                    if( n>0 )
-                      printf("%02X ", b);
-                    else
-                      printf("-- ");
-                    if( (i%16)==15 ) printf("\n");
-                  }
+                {
+                  if( !drive->read(channel, &b, &n, &eoi) )
+                    printf("XX ");
+                  else if( n==0 )
+                    printf("-- ");
+                  else
+                    printf("%02X ", b);
+
+                  if( (i%16)==15 ) printf("\n");
+                }
 
               drive->closeFile(channel);
             }
@@ -234,32 +237,36 @@ int main_(VDrive *drive, int argc, char **argv)
       else if( argc>2 && strcmp(argv[2], "dump")==0 )
         {
           char cmd[100];
+          int channel = 3;
           int sectors[35] = {21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,19,19,19,19,19,19,19,18,18,18,18,18,18,17,17,17,17,17};
-          if( drive->openFile(2, "#") )
+          if( drive->openFile(channel, "#") )
             {
               for(int t=1; t<=35; t++)
-                for(int s=0; s<sectors[t]; s++)
+                for(int s=0; s<sectors[t-1]; s++)
                   {
-                    snprintf(cmd, 100, "U1:2,0,%i,%i", t, s);
+                    printf("\nReading track %i sector %i\n", t, s);
+                    snprintf(cmd, 100, "U1:%i,0,%i,%i", channel, t, s);
                     bool ok = drive->execute(cmd, strlen(cmd));
-                    printf("\nReading track %i sector %i, %i, status: %s\n", t, s, ok, drive->getStatusString());
+                    if( atoi(drive->getStatusString())>0 ) printf("Status: %s\n", drive->getStatusString());
                     int i=0;
 
-                    size_t n = 1, nn = 0;
+                    size_t n = 1;
                     uint8_t b;
-                    bool eoi = false;
-                    while( !eoi )
+                    bool eoi;
+                    for(int i=0; i<256; i++)
                       {
-                        if( drive->read(2, &b, &n, &eoi) )
-                          printf("%02X ", b);
+                        if( !drive->read(channel, &b, &n, &eoi) )
+                          printf("XX ");
+                        else if( n==0 )
+                          printf("-- ");
                         else
-                          printf("?? ");
+                          printf("%02X ", b);
 
-                        if( ++nn == 16 ) { nn=0; printf("\n"); }
+                        if( (i%16)==15 ) printf("\n");
                       }
                   }
 
-              drive->closeFile(2);
+              drive->closeFile(channel);
             }
         }
       else
