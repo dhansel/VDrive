@@ -423,7 +423,7 @@ int vdrive_iec_open(vdrive_t *vdrive, const uint8_t *name, unsigned int length,
     cbmdos_cmd_parse_plus_t *cmd_parse = &cmd_parse_stat;
 
     if (cmd_parse_ext == NULL) {
-        if ( (!name || !*name) && p->mode != BUFFER_COMMAND_CHANNEL) {
+        if ( name==NULL && p->mode != BUFFER_COMMAND_CHANNEL) {
             return SERIAL_NO_DEVICE;
         }
     } else {

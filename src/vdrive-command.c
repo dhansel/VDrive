@@ -3526,10 +3526,12 @@ int vdrive_command_set_error(vdrive_t *vdrive, int code, unsigned int track,
     /* Length points to the last byte, and doesn't give the length.  */
     p->length = (unsigned int)strlen((char *)p->buffer) - 1;
 
+#ifdef DEBUG_DRIVE
     if (code>=10 && code != CBMDOS_IPE_DOS_VERSION) {
         log_message(vdrive_command_log, "ERR = %02d, %s, %02u, %02u",
                     code, message, track, sector);
     }
+#endif
 
     p->bufptr = 0;
     p->readmode = CBMDOS_FAM_READ;
