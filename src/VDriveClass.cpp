@@ -11,6 +11,7 @@ extern "C"
 #include "diskimage.h"
 #include "diskcontents-block.h"
 #include "imagecontents.h"
+#include "fsimage.h"
 }
 
 
@@ -162,6 +163,15 @@ bool VDrive::createDiskImage(const char *filename, const char *itype, const char
       
       return res;
     }
+}
+
+
+const char *VDrive::getDiskImageFilename()
+{
+  if( m_drive->image!=NULL && m_drive->image->media.fsimage!=NULL )
+    return m_drive->image->media.fsimage->name;
+  else
+    return NULL;
 }
 
 

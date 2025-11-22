@@ -20,6 +20,9 @@ class VDrive
   // to interact with the file system
   bool openDiskImage(const char *filename, bool readOnly = false);
 
+  // returns the filename of the currently open disk image (NULL if nothing opened)
+  const char *getDiskImageFilename();
+
   // close the disk image currently in use
   void closeDiskImage();
 
