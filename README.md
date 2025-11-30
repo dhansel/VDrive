@@ -103,7 +103,8 @@ It should be fairly simple to adjust to other environments.
   calling this if read/write/execute fails gives the standard CBMDOS error messages
 
 - ```int getStatusCode()```
-  returns the current status code according to the content of the error message buffer.
+
+  Returns the current status code according to the content of the error message buffer.
   Returns -1 if the content of the error message buffer does not start with "NN," (N=digit)
 
 - ```size_t getStatusBuffer(void *buf, size_t bufSize, bool *eoi = NULL)```
@@ -113,10 +114,12 @@ It should be fairly simple to adjust to other environments.
   if all data from the status buffer has been read, false otherwise.
 
 - ```bool readSector(uint32_t track, uint32_t sector, uint8_t *buf)```
+
   Read *track*/*sector* from the disk image and place it in *buf*.
   *buf* must have a size of at least 256 bytes. Returns true if successful.
 
 - ```bool writeSector(uint32_t track, uint32_t sector, const uint8_t *buf)```
+
   Write data from *buf* to *track*/*sector*of the disk image.
   *buf* must have a size of at least 256 bytes. Returns true if successful.
 
