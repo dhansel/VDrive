@@ -285,7 +285,7 @@ int vdrive_command_execute(vdrive_t *vdrive, const uint8_t *buf,
                     case 'H':
                     case '8':
                         if (cmd.commandlength == 2) {
-                            status = CBMDOS_IPE_NOT_READY;
+                            status = CBMDOS_IPE_MEMEXE_NOT_SUPPORTED;
                         }
                         goto out;
 
@@ -794,7 +794,7 @@ static int vdrive_command_block(vdrive_t *vdrive, cbmdos_cmd_parse_plus_t *cmd)
             break;
         case 'E':
             log_warning(vdrive_command_log, "B-E: %d %d %d %d (needs TDE)", channel, drive, track, sector);
-            status = CBMDOS_IPE_OK;
+            status = CBMDOS_IPE_MEMEXE_NOT_SUPPORTED;
             goto out;
             break;
         default:
@@ -3701,7 +3701,7 @@ int vdrive_command_memory_exec(vdrive_t *vdrive, const uint8_t *buf, uint16_t ad
     }
 
     log_warning(vdrive_command_log, "M-E %04x (+%u) (needs TDE)", addr, length - 5);
-    return vdrive_command_set_error(vdrive, CBMDOS_IPE_OK, 0, 0);
+    return vdrive_command_set_error(vdrive, CBMDOS_IPE_MEMEXE_NOT_SUPPORTED, 0, 0);
 }
 
 /*

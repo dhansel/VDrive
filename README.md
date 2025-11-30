@@ -44,10 +44,15 @@ It should be fairly simple to adjust to other environments.
   
   Returns true if a disk image has been successfuly opened for this drive.
 
-- ```bool openFile(uint8_t channel, const char *name, bool convertNameToPETSCII = false)```
+- ```const char *getDiskImageFilename()```
+  
+  Returns the file name of the currently mounted disk image or NULL if no image is mounted.
+
+- ```bool openFile(uint8_t channel, const char *name, int nameLen = -1, bool convertNameToPETSCII = false)```
   
   Opens a file within the current disk image on the given channel, returning true if
-  the file was successfully opened. If "convertNameToPETSCII" is false then the "name"
+  the file was successfully opened. *nameLen* is the length of the file name in characters
+  (-1 means the file name is NUL-terminated). If "convertNameToPETSCII" is false then the "name"
   parameter is assumed to be PETSCII characters, otherwise it is assumed ASCII and will
   be converted to PETSCII before attempting to open the file.
 
@@ -97,10 +102,23 @@ It should be fairly simple to adjust to other environments.
   Returns the current status message from the error message buffer
   calling this if read/write/execute fails gives the standard CBMDOS error messages
 
-- ```size_t getStatusBuffer(void *buf, size_t bufSize)```
+- ```int getStatusCode()```
+  returns the current status code according to the content of the error message buffer.
+  Returns -1 if the content of the error message buffer does not start with "NN," (N=digit)
+
+- ```size_t getStatusBuffer(void *buf, size_t bufSize, bool *eoi = NULL)```
   
-  Copies the contents of the drive's status buffer to "buf", not exceeding
-  the given bufSize length.
+  Copies the contents of the drive's status buffer to *buf*, not exceeding
+  the given *bufSize* length. If *eoi* is non-NULL, it will be set to true
+  if all data from the status buffer has been read, false otherwise.
+
+- ```bool readSector(uint32_t track, uint32_t sector, uint8_t *buf)```
+  Read *track*/*sector* from the disk image and place it in *buf*.
+  *buf* must have a size of at least 256 bytes. Returns true if successful.
+
+- ```bool writeSector(uint32_t track, uint32_t sector, const uint8_t *buf)```
+  Write data from *buf* to *track*/*sector*of the disk image.
+  *buf* must have a size of at least 256 bytes. Returns true if successful.
 
 - ```static bool createDiskImage(const char *filename, const char *itype, const char *name, bool convertNameToPETSCII)```
   
