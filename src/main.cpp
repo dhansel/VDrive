@@ -221,10 +221,10 @@ int main_(VDrive *drive, int argc, char **argv)
         }
       else if( argc>4 && strcmp(argv[2], "mwrite")==0 )
         {
-          uint8_t buf[256], len = atoi(argv[4]);
+          uint8_t buf[256], addr = atoi(argv[3]), len = atoi(argv[4]);
           memcpy(buf, "M-W", 3);
-          buf[3] = atoi(argv[3])&255;
-          buf[4] = atoi(argv[3])/256;
+          buf[3] = addr&255;
+          buf[4] = addr/256;
           buf[5] = len;
           for(int i=0; i<len; i++) buf[6+i] = atoi(argv[5+i]);
           drive->execute((const char *) buf, 6+len);
@@ -281,7 +281,7 @@ int main(int argc, char **argv)
 {
   VDrive *drive = new VDrive(0);
   
-  char *argv2[10];
+  char *argv2[256];
 
   if( argc>1 )
     {
